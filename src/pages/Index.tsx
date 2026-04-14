@@ -8,14 +8,18 @@ import {
   Building2,
   Megaphone,
   UtensilsCrossed,
-  BarChart3
+  BarChart3,
+  Lock
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useModel } from "@/hooks/useModel";
 
 const Index = () => {
+  const { isAdvanced } = useModel();
+
   // Buscar total de clientes
   const { data: totalClientes, isLoading: loadingClientes } = useQuery({
     queryKey: ["dashboard_clientes"],
@@ -152,51 +156,55 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card className="glass-card neon-border hover:neon-glow-magenta transition-all duration-300 group">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pedidos
-            </CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
-              <ShoppingCart className="h-4 w-4 text-secondary" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loadingPedidos ? (
-              <Skeleton className="h-9 w-20" />
-            ) : (
-              <div className="text-3xl font-bold neon-text-magenta">
-                {totalPedidos?.toLocaleString("pt-BR")}
+        {isAdvanced && (
+          <Card className="glass-card neon-border hover:neon-glow-magenta transition-all duration-300 group">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pedidos
+              </CardTitle>
+              <div className="p-2 rounded-lg bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
+                <ShoppingCart className="h-4 w-4 text-secondary" />
               </div>
-            )}
-            <p className="text-xs text-muted-foreground mt-1">
-              Total de pedidos
-            </p>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              {loadingPedidos ? (
+                <Skeleton className="h-9 w-20" />
+              ) : (
+                <div className="text-3xl font-bold neon-text-magenta">
+                  {totalPedidos?.toLocaleString("pt-BR")}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Total de pedidos
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="glass-card neon-border hover:neon-glow-green transition-all duration-300 group">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Faturamento
-            </CardTitle>
-            <div className="p-2 rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors">
-              <DollarSign className="h-4 w-4 text-accent" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loadingFaturamento ? (
-              <Skeleton className="h-9 w-24" />
-            ) : (
-              <div className="text-3xl font-bold neon-text-green">
-                {formatarMoeda(faturamentoData?.faturamentoAtual || 0)}
+        {isAdvanced && (
+          <Card className="glass-card neon-border hover:neon-glow-green transition-all duration-300 group">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Faturamento
+              </CardTitle>
+              <div className="p-2 rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors">
+                <DollarSign className="h-4 w-4 text-accent" />
               </div>
-            )}
-            <p className="text-xs text-muted-foreground mt-1">
-              Últimos 30 dias
-            </p>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              {loadingFaturamento ? (
+                <Skeleton className="h-9 w-24" />
+              ) : (
+                <div className="text-3xl font-bold neon-text-green">
+                  {formatarMoeda(faturamentoData?.faturamentoAtual || 0)}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Últimos 30 dias
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="glass-card neon-border hover:neon-glow-cyan transition-all duration-300 group">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -260,21 +268,31 @@ const Index = () => {
                 <span>Cardápio</span>
               </Link>
             </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-6 flex flex-col gap-2 border-border/50 hover:border-primary hover:neon-glow-cyan transition-all duration-300"
-              asChild
-            >
-              <Link to="/relatorios">
-                <BarChart3 className="h-6 w-6 text-primary" />
-                <span>Relatórios</span>
-              </Link>
-            </Button>
+            {isAdvanced ? (
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col gap-2 border-border/50 hover:border-primary hover:neon-glow-cyan transition-all duration-300"
+                asChild
+              >
+                <Link to="/relatorios">
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                  <span>Relatórios</span>
+                </Link>
+              </Button>
+            ) : (
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col gap-2 border-border/50 opacity-40 cursor-not-allowed"
+                disabled
+              >
+                <Lock className="h-6 w-6 text-muted-foreground" />
+                <span className="text-muted-foreground">Relatórios</span>
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
     </div>
   );
 };
-
 export default Index;

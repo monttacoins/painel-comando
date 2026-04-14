@@ -22,14 +22,14 @@ const Cardapio = () => {
   const [outroProdutoDialogOpen, setOutroProdutoDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
-  const [editingPrato, setEditingPrato] = useState<{ id: number; nome: string | null; ingredientes: string | null; preco_unitario: number | null; disponivel: boolean } | null>(null);
-  const [editingBebida, setEditingBebida] = useState<{ id: number; nome: string | null; tipo: string | null; tamanho: string | null; valor: number | null } | null>(null);
+  const [editingPrato, setEditingPrato] = useState<{ id: number; nome: string | null; discriminacao: string | null; preco_unitario: number | null; disponivel: boolean } | null>(null);
+  const [editingBebida, setEditingBebida] = useState<{ id: number; nome: string | null; tipo: string | null; discriminacao: string | null; valor: number | null; disponivel: string | null } | null>(null);
   const [editingOutroProduto, setEditingOutroProduto] = useState<{ id: number; produto: string | null; descricao: string | null; tipo: string | null; valor: number | null; disponivel: boolean | null } | null>(null);
   
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'prato' | 'bebida' | 'outro'; id: number; name: string } | null>(null);
   
-  const [pratoForm, setPratoForm] = useState({ nome: "", ingredientes: "", preco_unitario: "" });
-  const [bebidaForm, setBebidaForm] = useState({ nome: "", tipo: "", tamanho: "", valor: "" });
+  const [pratoForm, setPratoForm] = useState({ nome: "", discriminacao: "", preco_unitario: "" });
+  const [bebidaForm, setBebidaForm] = useState({ nome: "", tipo: "", discriminacao: "", valor: "" });
   const [outroProdutoForm, setOutroProdutoForm] = useState({ produto: "", descricao: "", tipo: "", valor: "" });
 
   const { data: cardapio, isLoading: loadingCardapio } = useQuery({
@@ -60,18 +60,18 @@ const Cardapio = () => {
   });
 
   const savePratoMutation = useMutation({
-    mutationFn: async (prato: { id?: number; nome: string; ingredientes: string; preco_unitario: number }) => {
+    mutationFn: async (prato: { id?: number; nome: string; discriminacao: string; preco_unitario: number }) => {
       if (prato.id) {
         const { error } = await supabase.from("cardapio").update({
           nome: prato.nome,
-          ingredientes: prato.ingredientes,
+          discriminacao: prato.discriminacao,
           preco_unitario: prato.preco_unitario,
         }).eq("id", prato.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("cardapio").insert({
           nome: prato.nome,
-          ingredientes: prato.ingredientes,
+          discriminacao: prato.discriminacao,
           preco_unitario: prato.preco_unitario,
         });
         if (error) throw error;
@@ -82,21 +82,21 @@ const Cardapio = () => {
       toast.success(editingPrato ? "Prato atualizado!" : "Prato adicionado!");
       setPratoDialogOpen(false);
       setEditingPrato(null);
-      setPratoForm({ nome: "", ingredientes: "", preco_unitario: "" });
+      setPratoForm({ nome: "", discriminacao: "", preco_unitario: "" });
     },
     onError: () => toast.error("Erro ao salvar prato"),
   });
 
   const saveBebidaMutation = useMutation({
-    mutationFn: async (bebida: { id?: number; nome: string; tipo: string; tamanho: string; valor: number }) => {
+    mutationFn: async (bebida: { id?: number; nome: string; tipo: string; discriminacao: string; valor: number }) => {
       if (bebida.id) {
         const { error } = await supabase.from("bebidas").update({
-          nome: bebida.nome, tipo: bebida.tipo, tamanho: bebida.tamanho, valor: bebida.valor,
+          nome: bebida.nome, tipo: bebida.tipo, discriminacao: bebida.discriminacao, valor: bebida.valor,
         }).eq("id", bebida.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("bebidas").insert({
-          nome: bebida.nome, tipo: bebida.tipo, tamanho: bebida.tamanho, valor: bebida.valor,
+          nome: bebida.nome, tipo: bebida.tipo, discriminacao: bebida.discriminacao, valor: bebida.valor,
         });
         if (error) throw error;
       }
@@ -106,7 +106,7 @@ const Cardapio = () => {
       toast.success(editingBebida ? "Bebida atualizada!" : "Bebida adicionada!");
       setBebidaDialogOpen(false);
       setEditingBebida(null);
-      setBebidaForm({ nome: "", tipo: "", tamanho: "", valor: "" });
+      setBebidaForm({ nome: "", tipo: "", discriminacao: "", valor: "" });
     },
     onError: () => toast.error("Erro ao salvar bebida"),
   });
@@ -182,7 +182,7 @@ const Cardapio = () => {
     setEditingPrato(prato);
     setPratoForm({
       nome: prato.nome || "",
-      ingredientes: prato.ingredientes || "",
+      discriminacao: prato.discriminacao || "",
       preco_unitario: prato.preco_unitario?.toString() || "",
     });
     setPratoDialogOpen(true);
@@ -192,7 +192,7 @@ const Cardapio = () => {
     if (!bebida) return;
     setEditingBebida(bebida);
     setBebidaForm({
-      nome: bebida.nome || "", tipo: bebida.tipo || "", tamanho: bebida.tamanho || "", valor: bebida.valor?.toString() || "",
+      nome: bebida.nome || "", tipo: bebida.tipo || "", discriminacao: bebida.discriminacao || "", valor: bebida.valor?.toString() || "",
     });
     setBebidaDialogOpen(true);
   };
@@ -206,8 +206,8 @@ const Cardapio = () => {
     setOutroProdutoDialogOpen(true);
   };
 
-  const openNewPrato = () => { setEditingPrato(null); setPratoForm({ nome: "", ingredientes: "", preco_unitario: "" }); setPratoDialogOpen(true); };
-  const openNewBebida = () => { setEditingBebida(null); setBebidaForm({ nome: "", tipo: "", tamanho: "", valor: "" }); setBebidaDialogOpen(true); };
+  const openNewPrato = () => { setEditingPrato(null); setPratoForm({ nome: "", discriminacao: "", preco_unitario: "" }); setPratoDialogOpen(true); };
+  const openNewBebida = () => { setEditingBebida(null); setBebidaForm({ nome: "", tipo: "", discriminacao: "", valor: "" }); setBebidaDialogOpen(true); };
   const openNewOutroProduto = () => { setEditingOutroProduto(null); setOutroProdutoForm({ produto: "", descricao: "", tipo: "", valor: "" }); setOutroProdutoDialogOpen(true); };
 
   const confirmDelete = (type: 'prato' | 'bebida' | 'outro', id: number, name: string) => {
@@ -219,7 +219,7 @@ const Cardapio = () => {
     savePratoMutation.mutate({
       id: editingPrato?.id,
       nome: pratoForm.nome,
-      ingredientes: pratoForm.ingredientes,
+      discriminacao: pratoForm.discriminacao,
       preco_unitario: parseFloat(pratoForm.preco_unitario.replace(",", ".")) || 0,
     });
   };
@@ -227,7 +227,7 @@ const Cardapio = () => {
   const handleSaveBebida = () => {
     saveBebidaMutation.mutate({
       id: editingBebida?.id,
-      nome: bebidaForm.nome, tipo: bebidaForm.tipo, tamanho: bebidaForm.tamanho,
+      nome: bebidaForm.nome, tipo: bebidaForm.tipo, discriminacao: bebidaForm.discriminacao,
       valor: parseFloat(bebidaForm.valor.replace(",", ".")) || 0,
     });
   };
@@ -282,7 +282,7 @@ const Cardapio = () => {
                         <h4 className="font-medium">{item.nome}</h4>
                         {!item.disponivel && <Badge variant="secondary" className="text-xs">Indisponível</Badge>}
                       </div>
-                      {item.ingredientes && <p className="text-sm text-muted-foreground px-1 mb-3">{item.ingredientes}</p>}
+                      {item.discriminacao && <p className="text-sm text-muted-foreground px-1 mb-3">{item.discriminacao}</p>}
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
                           <Switch checked={item.disponivel} onCheckedChange={(checked) => togglePratoDisponibilidadeMutation.mutate({ id: item.id, disponivel: checked })} />
@@ -325,9 +325,9 @@ const Cardapio = () => {
                     <div key={bebida.id} className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50 hover:border-secondary/50 transition-colors">
                       <div className="flex-1">
                         <h4 className="font-medium">{bebida.nome}</h4>
+                        {bebida.discriminacao && <p className="text-sm text-muted-foreground mt-1">{bebida.discriminacao}</p>}
                         <div className="flex gap-2 mt-1">
                           {bebida.tipo && <Badge variant="secondary">{bebida.tipo}</Badge>}
-                          {bebida.tamanho && <Badge variant="outline">{bebida.tamanho}</Badge>}
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
@@ -405,7 +405,7 @@ const Cardapio = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div><Label>Nome</Label><Input value={pratoForm.nome} onChange={(e) => setPratoForm({ ...pratoForm, nome: e.target.value })} placeholder="Nome do prato" /></div>
-            <div><Label>Ingredientes</Label><Textarea value={pratoForm.ingredientes} onChange={(e) => setPratoForm({ ...pratoForm, ingredientes: e.target.value })} placeholder="Ingredientes" /></div>
+            <div><Label>Descrição</Label><Textarea value={pratoForm.discriminacao} onChange={(e) => setPratoForm({ ...pratoForm, discriminacao: e.target.value })} placeholder="Descrição / Ingredientes" /></div>
             <div><Label>Preço</Label><Input value={pratoForm.preco_unitario} onChange={(e) => setPratoForm({ ...pratoForm, preco_unitario: e.target.value })} placeholder="0,00" /></div>
           </div>
           <DialogFooter>
@@ -425,7 +425,7 @@ const Cardapio = () => {
           <div className="space-y-4">
             <div><Label>Nome</Label><Input value={bebidaForm.nome} onChange={(e) => setBebidaForm({ ...bebidaForm, nome: e.target.value })} placeholder="Nome da bebida" /></div>
             <div><Label>Tipo</Label><Input value={bebidaForm.tipo} onChange={(e) => setBebidaForm({ ...bebidaForm, tipo: e.target.value })} placeholder="Tipo" /></div>
-            <div><Label>Tamanho</Label><Input value={bebidaForm.tamanho} onChange={(e) => setBebidaForm({ ...bebidaForm, tamanho: e.target.value })} placeholder="Tamanho" /></div>
+            <div><Label>Descrição</Label><Input value={bebidaForm.discriminacao} onChange={(e) => setBebidaForm({ ...bebidaForm, discriminacao: e.target.value })} placeholder="Descrição" /></div>
             <div><Label>Valor</Label><Input value={bebidaForm.valor} onChange={(e) => setBebidaForm({ ...bebidaForm, valor: e.target.value })} placeholder="0,00" /></div>
           </div>
           <DialogFooter>

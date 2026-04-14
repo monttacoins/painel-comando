@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Bell, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,12 +35,9 @@ export function Layout({ children }: LayoutProps) {
           {/* Header */}
           <header className="h-16 border-b border-border/50 backdrop-blur-xl bg-background/80 flex items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-3">
-              {/* Mobile hamburger menu */}
-              {isMobile && (
-                <SidebarTrigger className="text-muted-foreground hover:text-primary transition-colors">
-                  <Menu className="h-6 w-6" />
-                </SidebarTrigger>
-              )}
+              <SidebarTrigger className="text-muted-foreground hover:text-primary transition-colors">
+                <Menu className="h-6 w-6" />
+              </SidebarTrigger>
               <Badge variant="outline" className="border-primary/50 text-primary hidden sm:inline-flex">
                 Admin Panel
               </Badge>

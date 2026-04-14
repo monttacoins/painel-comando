@@ -56,26 +56,32 @@ export type Database = {
       bebidas: {
         Row: {
           created_at: string
+          discriminacao: string | null
+          disponivel: string | null
           id: number
           nome: string | null
-          tamanho: string | null
           tipo: string | null
+          updated_at: string | null
           valor: number | null
         }
         Insert: {
           created_at?: string
+          discriminacao?: string | null
+          disponivel?: string | null
           id?: number
           nome?: string | null
-          tamanho?: string | null
           tipo?: string | null
+          updated_at?: string | null
           valor?: number | null
         }
         Update: {
           created_at?: string
+          discriminacao?: string | null
+          disponivel?: string | null
           id?: number
           nome?: string | null
-          tamanho?: string | null
           tipo?: string | null
+          updated_at?: string | null
           valor?: number | null
         }
         Relationships: []
@@ -105,44 +111,32 @@ export type Database = {
         Row: {
           categoria_id: number | null
           created_at: string
+          discriminacao: string | null
           disponivel: boolean
           id: number
-          ingredientes: string | null
           nome: string | null
           preco_unitario: number | null
-          valor_borda_recheada: number | null
-          valor_pizza_broto_4_fatias: number | null
-          valor_pizza_gigante_12_fatias: number | null
-          valor_pizza_grande_8_fatias: number | null
-          valor_pizza_media_6_fatias: number | null
+          updated_at: string | null
         }
         Insert: {
           categoria_id?: number | null
           created_at?: string
+          discriminacao?: string | null
           disponivel?: boolean
           id?: number
-          ingredientes?: string | null
           nome?: string | null
           preco_unitario?: number | null
-          valor_borda_recheada?: number | null
-          valor_pizza_broto_4_fatias?: number | null
-          valor_pizza_gigante_12_fatias?: number | null
-          valor_pizza_grande_8_fatias?: number | null
-          valor_pizza_media_6_fatias?: number | null
+          updated_at?: string | null
         }
         Update: {
           categoria_id?: number | null
           created_at?: string
+          discriminacao?: string | null
           disponivel?: boolean
           id?: number
-          ingredientes?: string | null
           nome?: string | null
           preco_unitario?: number | null
-          valor_borda_recheada?: number | null
-          valor_pizza_broto_4_fatias?: number | null
-          valor_pizza_gigante_12_fatias?: number | null
-          valor_pizza_grande_8_fatias?: number | null
-          valor_pizza_media_6_fatias?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -256,6 +250,7 @@ export type Database = {
           distancia_maxima: number | null
           goodzap_status: string | null
           id: number
+          model: string | null
           session: string | null
           tempo_atraso_minutos: number | null
           tempo_entrega_minutos: number | null
@@ -266,6 +261,7 @@ export type Database = {
           distancia_maxima?: number | null
           goodzap_status?: string | null
           id?: number
+          model?: string | null
           session?: string | null
           tempo_atraso_minutos?: number | null
           tempo_entrega_minutos?: number | null
@@ -276,6 +272,7 @@ export type Database = {
           distancia_maxima?: number | null
           goodzap_status?: string | null
           id?: number
+          model?: string | null
           session?: string | null
           tempo_atraso_minutos?: number | null
           tempo_entrega_minutos?: number | null
@@ -396,6 +393,24 @@ export type Database = {
           created_at?: string
           detalhes?: string | null
           horario?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      keep_alive: {
+        Row: {
+          check: string | null
+          created_at: string
+          id: number
+        }
+        Insert: {
+          check?: string | null
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          check?: string | null
+          created_at?: string
           id?: number
         }
         Relationships: []
@@ -598,6 +613,39 @@ export type Database = {
         }
         Relationships: []
       }
+      reservas: {
+        Row: {
+          created_at: string
+          data_reserva: string | null
+          horario_reserva: string | null
+          id: number
+          nome: string | null
+          observacoes: string | null
+          qtde_pessoas: number | null
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string
+          data_reserva?: string | null
+          horario_reserva?: string | null
+          id?: number
+          nome?: string | null
+          observacoes?: string | null
+          qtde_pessoas?: number | null
+          whatsapp: string
+        }
+        Update: {
+          created_at?: string
+          data_reserva?: string | null
+          horario_reserva?: string | null
+          id?: number
+          nome?: string | null
+          observacoes?: string | null
+          qtde_pessoas?: number | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       saudacoes_goodzap: {
         Row: {
           ativa: boolean | null
@@ -664,6 +712,24 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -671,9 +737,20 @@ export type Database = {
     Functions: {
       atualizar_metricas_clientes: { Args: never; Returns: undefined }
       get_full_config: { Args: never; Returns: Json }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "admin" | "super-admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -800,6 +877,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin", "super-admin"],
+    },
   },
 } as const

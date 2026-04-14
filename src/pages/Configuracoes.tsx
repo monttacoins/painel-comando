@@ -95,10 +95,10 @@ const Configuracoes = () => {
   useEffect(() => {
     if (config) {
       setFormData({
-        tempo_entrega_minutos: config.tempo_entrega_minutos || 30,
-        tempo_atraso_minutos: config.tempo_atraso_minutos || 10,
-        distancia_maxima: config.distancia_maxima || 10,
-        tempo_resposta_minutos: config.tempo_resposta_minutos || 5,
+        tempo_entrega_minutos: config.tempo_entrega_minutos ?? 30,
+        tempo_atraso_minutos: config.tempo_atraso_minutos ?? 10,
+        distancia_maxima: config.distancia_maxima ?? 10,
+        tempo_resposta_minutos: config.tempo_resposta_minutos ?? 5,
         goodzap_status: config.goodzap_status || "ativo",
       });
     }
